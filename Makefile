@@ -1,5 +1,5 @@
 build:
 	go build jackdwyer.go
 
-dependencies:
+get-deps:
 	go get github.com/mattn/go-sqlite3
