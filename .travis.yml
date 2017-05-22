@@ -4,6 +4,7 @@ go:
   - 1.7.x
 
 script:
+  - make get-test-data
   - make test
 
 install:
