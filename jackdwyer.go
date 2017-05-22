@@ -4,12 +4,19 @@ import (
 	"database/sql"
 	"fmt"
 	"html/template"
+	"image"
+	"image/jpeg"
 	"io"
 	"log"
 	"net/http"
 	"os"
 	"regexp"
 	"strconv"
+
+	"github.com/nfnt/resize"
+
+	_ "image/jpeg"
+	_ "image/png"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -32,6 +39,16 @@ type location struct {
 	address      string
 	ShortAddress string
 	unlocked     bool
+}
+
+func HandleUpload(imgPath string) {
+	file, _ := os.Open(imgPath)
+	defer file.Close()
+	img, _, _ := image.Decode(file)
+	m := resize.Resize(960, 0, img, resize.Lanczos3)
+	out, _ := os.Create("/tmp/out.jpg")
+	defer out.Close()
+	jpeg.Encode(out, m, nil)
 }
 
 func logRequest(r *http.Request) {

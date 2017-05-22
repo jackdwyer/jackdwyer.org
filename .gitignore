@@ -1,3 +1,4 @@
 .envrc
 db
 bin/
+test_data/
