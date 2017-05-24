@@ -12,6 +12,7 @@ refresh_db:
 	aws --profile personal s3 cp $(S3_DB_LOCATION) db/app.db
 
 get-deps:
+	go get -u github.com/aws/aws-sdk-go
 	go get github.com/mattn/go-sqlite3
 	go get github.com/nfnt/resize
 

@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"image"
+	"io/ioutil"
 	"os"
 	"testing"
 
@@ -55,4 +56,10 @@ func TestImageResize(t *testing.T) {
 	if jackdwyer.ImageTooBig(resizedImageConfig) {
 		t.Error("Image was not resized")
 	}
+}
+
+func TestFileUpload(t *testing.T) {
+	fileByteArr, err := ioutil.ReadFile("./test_data/2160x1440.png")
+	fail(t, err)
+	_ = jackdwyer.UploadFile(fileByteArr, "thisissometestfile.png")
 }
