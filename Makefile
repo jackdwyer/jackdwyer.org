@@ -1,7 +1,7 @@
 build:
 	go build -o bin/jackdwyer jackdwyer.go
 
-run:
+run: build
 	./bin/jackdwyer
 
 test:

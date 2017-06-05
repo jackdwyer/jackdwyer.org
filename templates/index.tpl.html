@@ -1,8 +1,35 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>jackdwyer</title>
+    <!-- TODO: this is temporary and will break https -->
+    <link rel="stylesheet" href="http://images.jackdwyer.org/static/vendor/normalize.css">
+    <link rel="stylesheet" href="http://images.jackdwyer.org/static/vendor/skeleton.css">
+    <meta charset="utf-8">
+    <meta name="description" content="jack dwyer's travel location">
+    <meta name="author" content="Jack Dwyer">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Roboto+Mono:400,700' rel='stylesheet' type='text/css'>
+    <style>
+      body {
+        font: 16px/1.5em 'Roboto Mono', 'Consolas', 'Andale Mono', 'Monaco', 'Courier New', Courier, monospace;
+        padding: 1ch;
+        margin: 0;
+      }
+    </style> 
+  </head>
   <body>
-    <h1> Jackos Pageroooo </h1>
-    {{range .}}
-      </p>{{.Timestamp}} | {{.Image}} | {{.ShortAddress}}</p>
-    {{end}}
+    <div class="container">
+      <br>
+      <h4 style="margin: 0px; padding: 0px;"><center>JACK DWYER</center></h4>
+      <h6><center><i>currently.</i> NYC, USA</center></h6>
+      {{range .}}
+        <img class="u-max-full-width" src="http://images.jackdwyer.org/960/{{ .Image }}"></img>
+        <p align="right" style="margin:0px; border:0px;"><i>when. </i>2017-06-04</p>
+        <p align="right"><i>near.</i> Johnson Avenue, NYC, New York, US</p>
+      {{end}}
+
+      <a href=/>jackdwyer</a> | <a href="http://cycling.jackdwyer.org">cycling</a> | <a href="/projects">projects</a> | <a href="/blog">blog</a> | <a href="/log">log</a> | J f867b42baa72444f5d3ac7c79ea57d33eb505f45
+    </div>
   </body>
 </html>
