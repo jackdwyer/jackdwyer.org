@@ -1,6 +1,8 @@
 build:
 	go build -o bin/jackdwyer jackdwyer.go
 
+release: build
+
 run: build
 	./bin/jackdwyer
 
