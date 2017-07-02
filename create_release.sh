@@ -48,7 +48,9 @@ asset_upload_url=$(curl -s -X POST https://api.github.com/repos/jackdwyer/jackdw
 -u "jackdwyer:${GITHUB_API_TOKEN}" \
 -d "${release_body}" | jq -r -M .upload_url | cut -d"{" -f1)
 
-make release
+if ! [[ -f bin/jackdwyer ]]; then
+  make release
+fi
 
 curl -X POST "${asset_upload_url}?name=jackdwyer" \
 -u "jackdwyer:${GITHUB_API_TOKEN}" \
