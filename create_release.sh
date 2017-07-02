@@ -1,17 +1,18 @@
 #!/bin/bash
-# set -euo pipefail
+set -euo pipefail
 
-TAG=${1}
-TAG_OBJECT=${2}
-TAG_MESSAGE="CI GENERATED"
-DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-RELEASE_NAME="$TAG_OBJECT"
-RELEASE_DESC="${TAG_OBJECT_RELEASE}"
+TAG=${1-}
+TAG_OBJECT=${2-}
 
 if [[ -z ${TAG} ]] || [[ -z ${TAG_OBJECT} ]]; then
   echo "./create release <tag> <sha>"
   exit 1
 fi
+
+TAG_MESSAGE="CI GENERATED"
+DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+RELEASE_NAME="${TAG_OBJECT}"
+RELEASE_DESC="${RELEASE_NAME}"
 
 tag_body=$(cat  << EOF
 {
