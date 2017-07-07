@@ -13,6 +13,7 @@ script:
 - make build
 - "./create_release.sh ${_DATETIME} $(git rev-parse --verify HEAD)"
 - echo "ssh-rsa ${PRIV_SSH_KEY}" > yar_my_key
+- chmod 0600 yar_my_key
 - "./deploy.sh ${_DATETIME}"
 env:
   global:
