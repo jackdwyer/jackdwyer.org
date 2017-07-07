@@ -1,0 +1,9 @@
+[Unit]
+Description=jackdwyer website
+
+[Service]
+ExecStart=/opt/jackdwyer/jackdwyer
+WorkingDirectory=/opt/jackdwyer
+
+[Install]
+WantedBy=multi-user.target

@@ -1,16 +1,20 @@
 language: go
 branches:
   only:
-    - master
+  - master
 go:
 - 1.7.x
 install:
 - make get-deps
 script:
+- export _DATETIME=$(date +%s)
 - make get-test-data
 - make test
 - make build
-- "./create_release.sh $(date +%s) $(git rev-parse --verify HEAD)"
+- "./create_release.sh ${_DATETIME} $(git rev-parse --verify HEAD)"
+- echo "ssh-rsa ${PRIV_SSH_KEY}" > yar_my_key
+- "./deploy.sh ${_DATETIME}"
 env:
   global:
-    secure: FXfxpWPG+kYHzDAj4QQ4eSz3/uyDJC0WT7UjLoA9gTd5EQ0SfCmzthKOYkm+mL7Eu/P7IQLLPOZQ9N7X5hGtxbhBYimmeE/IE0VZumTIEEuk9FBlgpVZ7fvjzXcjfhN2PxV6R3pY1QWKX5Qa12aKdqlMWloHjfUabkzbSjlw3gWiDMmomivltYz6yUxj+b3JyclMN0329pRzlzySyaeDh4yXXHYM7L/rGxQHoBf2cMYtyR//zusqo2hU98s7Tlvp7ThtxgTsu++LuafHkFaPHUKZB5675tj3B+a57CHHmftO6kaDEub4NeqT+s3+qUx6KAyeBEAy581JQ1N7yjddImIEHRicGiz5DCtbbqFIEyZ6E8AhB+R4WLKAsFUKjF5TWvSEvTl2bw3VpatC7fqw+HgYxaYDoKTewGVhnOqkz1BnGB6PQ2Ri470ZtzuGV9QbXHinKYIzaLyIQTiZ2VdtTxe1mY6X/y6oEiMy8Tsb/5STML7Q9QahT/vGsw68dSF2IAj8/vSMWPU/wDuHckLq6N3SMG9MrNX7hHM9HsJ3sCb2TRv29vtxGmhKBnxo6uwwvnKm6TKYMDrjPGDfM6rY3jodwtKChS1yolCr5zOZZN2Ua2HZ0irFPoADtXL+sdGxdjvxUUhdAqPlmbl390rrsW3Q6fum7yaXu0zfI9tyva4=
+  - secure: FXfxpWPG+kYHzDAj4QQ4eSz3/uyDJC0WT7UjLoA9gTd5EQ0SfCmzthKOYkm+mL7Eu/P7IQLLPOZQ9N7X5hGtxbhBYimmeE/IE0VZumTIEEuk9FBlgpVZ7fvjzXcjfhN2PxV6R3pY1QWKX5Qa12aKdqlMWloHjfUabkzbSjlw3gWiDMmomivltYz6yUxj+b3JyclMN0329pRzlzySyaeDh4yXXHYM7L/rGxQHoBf2cMYtyR//zusqo2hU98s7Tlvp7ThtxgTsu++LuafHkFaPHUKZB5675tj3B+a57CHHmftO6kaDEub4NeqT+s3+qUx6KAyeBEAy581JQ1N7yjddImIEHRicGiz5DCtbbqFIEyZ6E8AhB+R4WLKAsFUKjF5TWvSEvTl2bw3VpatC7fqw+HgYxaYDoKTewGVhnOqkz1BnGB6PQ2Ri470ZtzuGV9QbXHinKYIzaLyIQTiZ2VdtTxe1mY6X/y6oEiMy8Tsb/5STML7Q9QahT/vGsw68dSF2IAj8/vSMWPU/wDuHckLq6N3SMG9MrNX7hHM9HsJ3sCb2TRv29vtxGmhKBnxo6uwwvnKm6TKYMDrjPGDfM6rY3jodwtKChS1yolCr5zOZZN2Ua2HZ0irFPoADtXL+sdGxdjvxUUhdAqPlmbl390rrsW3Q6fum7yaXu0zfI9tyva4=
+  - secure: RQmB1ygcXA3JaZz8JETcsisUl+Rn3mkIp+yjWja6TlhrliXwLP7q+brroousLk8w80Z3fvtP2UhcO2lIQHHrASwe3Agl6vrXiyfMRMVWvvwveZa8xYNWZbDo8bU3Edxq3iyJTaXguRvBGpGF6qArfy51SuZYkXbcoZpLO1sqHXstGt2QH5MFhCRMz3ckaIFyq21abiWAXfSdwa6HRh9NQ6vkUNKeGE+EdGcjCSi9MZVg83Pn+l8nXGXldiqqz2qcjj8xVuN9Nn9Jmb7ohxdTnU4aNDx4fB45Z+wBlOZRliTKwK5nk71lQrzfvFQZ33e/meus7X0LA2cV1YrqQzOeRXR2BKyMeSGK6iKFYu/W2E8B+/El6ePkyZUUVxoQtLEzilGdMSvJFfEKDGskUbUAsGQ22RWGSLlg0fJWLLfFKCLrGRCLirsXQ146QIsn1tCrKXFb9Bvh6vGAUhifzaTwMYePHJimN22EXU05ChwB4NNd30KtFQ8itJk/JvYBD6kRUI5vJvh6uEQJgAItUdGT9F7hRkAZgNZzFzOHsB8iNtGjNPShNso333kOQL7WzduIszvW05IZe9ohNdF+2zWPt15Mj/XXM6z9dd9Kzp429zkw3c17L5F7fLOBaU34k7STZnP/SvvwlGzIDF57652iC0wklcopZL9Z8wTI7CbaPWc=
