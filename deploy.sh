@@ -9,9 +9,11 @@ if [[ -z ${TIMESTAMP} ]]; then
   exit 1
 fi
 
-scp -i yar_my_key jackdwyer.org.service templates/* ${USER}@${HOST}:/opt/jackdwyer/templates/
+SSH_ARGS="-i yar_my_key -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
 
-ssh -i yar_my_key ${USER}@${HOST} "
+scp ${SSH_ARGS} jackdwyer.org.service templates/* ${USER}@${HOST}:/opt/jackdwyer/templates/
+
+ssh ${SSH_ARGS} ${USER}@${HOST} "
   sudo systemctl stop jackdwyer.org
   curl -L -o /opt/jackdwyer/jackdwyer 'https://github.com/jackdwyer/jackdwyer.org/releases/download/${TIMESTAMP}/jackdwyer'
   chmod +x /opt/jackdwyer/jackdwyer
