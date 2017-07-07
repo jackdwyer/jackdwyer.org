@@ -20,3 +20,5 @@ ssh ${SSH_ARGS} ${USER}@${HOST} "
   sudo systemctl daemon-reload
   sudo systemctl start jackdwyer.org
 "
+
+echo "DEPLOYMENT SUCCEEDED"
