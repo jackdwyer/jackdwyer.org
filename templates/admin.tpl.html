@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>jackdwyer</title>
+    <!-- TODO: this is temporary and will break https -->
+    <link rel="stylesheet" href="http://images.jackdwyer.org/static/vendor/normalize.css">
+    <link rel="stylesheet" href="http://images.jackdwyer.org/static/vendor/skeleton.css">
+    <meta charset="utf-8">
+    <meta name="description" content="jack dwyer's travel location">
+    <meta name="author" content="Jack Dwyer">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Roboto+Mono:400,700' rel='stylesheet' type='text/css'>
+    <style>
+      body {
+        font: 16px/1.5em 'Roboto Mono', 'Consolas', 'Andale Mono', 'Monaco', 'Courier New', Courier, monospace;
+        padding: 1ch;
+        margin: 0;
+      }
+    </style> 
+  </head>
+  <body>
+    <div class="container">
+      <table class="u-full-width">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Address</th>
+            <th>image</th>
+            <th>lat,lng</th>
+          </tr>
+        </thead>
+        <tbody>
+		  {{ range .}}
+          <tr>
+			<td>{{ .Timestamp }}</td>
+			<td>{{ .ShortAddress }}</td>
+			<td>{{ .Image }}</td>
+			<td>wut</td>
+          </tr>
+		  {{ end }}
+        </tbody>
+      </table>
+
+      <a href=/>jackdwyer</a> | <a href="http://cycling.jackdwyer.org">cycling</a> | <a href="/projects">projects</a> | <a href="/blog">blog</a> | <a href="/log">log</a> | J f867b42baa72444f5d3ac7c79ea57d33eb505f45
+    </div>
+  </body>
+</html>

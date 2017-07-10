@@ -71,13 +71,30 @@ func getLocationByOffset(offsetBase int) ([]location, error) {
 		fmt.Println(result)
 		results = append(results, result)
 	}
-	fmt.Println(offset)
+	return results, err
+}
+
+func getLocations(offsetBase int) ([]location, error) {
+	var result location
+	var results []location
+	offset := offsetBase * 30
+	rows, err := db.Query("select image, timestamp, short_address from location order by id desc limit 30 offset ?;", offset)
+	defer rows.Close()
+	if err != nil {
+		log.Printf("Failed Query: %q", err)
+	}
+	for rows.Next() {
+		rows.Scan(&result.Image, &result.Timestamp, &result.ShortAddress)
+		//fmt.Println(result)
+		results = append(results, result)
+	}
 	return results, err
 }
 
 func main() {
 	hostAndPort := fmt.Sprintf("%s:%s", host, port)
 	log.Printf("Starting Web Server @ http://%s", hostAndPort)
+	http.HandleFunc("/admin", admin)
 	http.HandleFunc("/upload", upload)
 	http.HandleFunc("/favicon.ico", favicon)
 	http.HandleFunc("/", index)
@@ -89,6 +106,25 @@ func main() {
 func favicon(w http.ResponseWriter, r *http.Request) {
 	logRequest(r)
 	http.ServeFile(w, r, "assets/favicon.ico")
+}
+
+func admin(w http.ResponseWriter, r *http.Request) {
+	logRequest(r)
+	page := r.URL.Query().Get("page")
+	i, err := strconv.Atoi(page)
+	cur := i
+	if err != nil {
+		cur = 0
+	}
+	fmt.Println(page)
+	results, err := getLocations(cur)
+	// fmt.Println(results)
+	if err != nil {
+		http.Error(w, "Internal Server Error", 500)
+		return
+	}
+	t := template.Must(template.ParseFiles("templates/admin.tpl.html"))
+	t.Execute(w, results)
 }
 
 // index/<pagination>: paginate location/image results
