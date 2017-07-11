@@ -14,6 +14,7 @@ script:
 - "./create_release.sh ${_DATETIME} $(git rev-parse --verify HEAD)"
 - chmod 0600 yar_my_key
 - "./deploy.sh ${_DATETIME}"
+- make validate-dev-deploy
 env:
   global:
   - secure: FXfxpWPG+kYHzDAj4QQ4eSz3/uyDJC0WT7UjLoA9gTd5EQ0SfCmzthKOYkm+mL7Eu/P7IQLLPOZQ9N7X5hGtxbhBYimmeE/IE0VZumTIEEuk9FBlgpVZ7fvjzXcjfhN2PxV6R3pY1QWKX5Qa12aKdqlMWloHjfUabkzbSjlw3gWiDMmomivltYz6yUxj+b3JyclMN0329pRzlzySyaeDh4yXXHYM7L/rGxQHoBf2cMYtyR//zusqo2hU98s7Tlvp7ThtxgTsu++LuafHkFaPHUKZB5675tj3B+a57CHHmftO6kaDEub4NeqT+s3+qUx6KAyeBEAy581JQ1N7yjddImIEHRicGiz5DCtbbqFIEyZ6E8AhB+R4WLKAsFUKjF5TWvSEvTl2bw3VpatC7fqw+HgYxaYDoKTewGVhnOqkz1BnGB6PQ2Ri470ZtzuGV9QbXHinKYIzaLyIQTiZ2VdtTxe1mY6X/y6oEiMy8Tsb/5STML7Q9QahT/vGsw68dSF2IAj8/vSMWPU/wDuHckLq6N3SMG9MrNX7hHM9HsJ3sCb2TRv29vtxGmhKBnxo6uwwvnKm6TKYMDrjPGDfM6rY3jodwtKChS1yolCr5zOZZN2Ua2HZ0irFPoADtXL+sdGxdjvxUUhdAqPlmbl390rrsW3Q6fum7yaXu0zfI9tyva4=

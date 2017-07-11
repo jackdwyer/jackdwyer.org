@@ -27,3 +27,6 @@ get-test-data:
 	if [[ ! -f ./test_data/960x540.png ]]; then curl -o ./test_data/960x540.png https://dummyimage.com/960x540/8c8c8c/fff.jpg; fi
 	if [[ ! -f ./test_data/961x541.png ]]; then curl -o ./test_data/961x541.png https://dummyimage.com/961x541/8c8c8c/fff.jpg; fi
 	if [[ ! -f ./test_data/2160x1440.png ]]; then curl -o ./test_data/2160x1440.png https://dummyimage.com/2160x1440/8c8c8c/fff.jpg; fi
+
+validate-dev-deploy:
+	curl --fail -o/dev/null -s http://dev.jackdwyer.org/
