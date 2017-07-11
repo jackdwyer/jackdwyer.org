@@ -25,20 +25,21 @@ var db *sql.DB
 var host string = "127.0.0.1"
 var port string = "5000"
 var indexPaginationRE = regexp.MustCompile("^/([0-9]+)$")
+var deleteIdRE = regexp.MustCompile("^/delete/([0-9]+)$")
 
 type location struct {
-	id           int
+	Id           int
 	uuid         string
 	_type        string
-	latitude     float32
-	longitude    float32
+	Latitude     float32
+	Longitude    float32
 	accuracy     float32
 	Timestamp    string
 	Image        string
 	comment      []byte
 	address      string
 	ShortAddress string
-	unlocked     bool
+	Unlocked     bool
 }
 
 func HandleUpload(imgPath string) {
@@ -56,36 +57,30 @@ func logRequest(r *http.Request) {
 	log.Printf("%s", requestLine)
 }
 
-// Returns 10 location values from offset
-func getLocationByOffset(offsetBase int) ([]location, error) {
+func getLocations(offsetBase int, limit int, unlocked bool) ([]location, error) {
 	var result location
 	var results []location
-	offset := offsetBase * 10
-	rows, err := db.Query("select image, timestamp, short_address from location where unlocked=1 order by id desc limit 10 offset ?;", offset)
-	defer rows.Close()
-	if err != nil {
-		log.Printf("Failed Query: %q", err)
+	if unlocked {
+		offset := offsetBase * 10
+		rows, err := db.Query("select image, timestamp, short_address from location where unlocked=1 order by id desc limit ? offset ?;", limit, offset)
+		defer rows.Close()
+		if err != nil {
+			log.Printf("Failed Query: %q", err)
+		}
+		for rows.Next() {
+			rows.Scan(&result.Image, &result.Timestamp, &result.ShortAddress)
+			results = append(results, result)
+		}
+		return results, err
 	}
-	for rows.Next() {
-		rows.Scan(&result.Image, &result.Timestamp, &result.ShortAddress)
-		fmt.Println(result)
-		results = append(results, result)
-	}
-	return results, err
-}
-
-func getLocations(offsetBase int) ([]location, error) {
-	var result location
-	var results []location
 	offset := offsetBase * 30
-	rows, err := db.Query("select image, timestamp, short_address from location order by id desc limit 30 offset ?;", offset)
+	rows, err := db.Query("select id, latitude, longitude, image, timestamp, short_address, unlocked from location order by id desc limit ? offset ?;", limit, offset)
 	defer rows.Close()
 	if err != nil {
 		log.Printf("Failed Query: %q", err)
 	}
 	for rows.Next() {
-		rows.Scan(&result.Image, &result.Timestamp, &result.ShortAddress)
-		//fmt.Println(result)
+		rows.Scan(&result.Id, &result.Latitude, &result.Longitude, &result.Image, &result.Timestamp, &result.ShortAddress, &result.Unlocked)
 		results = append(results, result)
 	}
 	return results, err
@@ -95,6 +90,8 @@ func main() {
 	hostAndPort := fmt.Sprintf("%s:%s", host, port)
 	log.Printf("Starting Web Server @ http://%s", hostAndPort)
 	http.HandleFunc("/admin", admin)
+	http.HandleFunc("/delete", deleteLocation)
+	http.HandleFunc("/delete/", deleteLocation)
 	http.HandleFunc("/upload", upload)
 	http.HandleFunc("/favicon.ico", favicon)
 	http.HandleFunc("/", index)
@@ -116,9 +113,7 @@ func admin(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		cur = 0
 	}
-	fmt.Println(page)
-	results, err := getLocations(cur)
-	// fmt.Println(results)
+	results, err := getLocations(cur, 30, false)
 	if err != nil {
 		http.Error(w, "Internal Server Error", 500)
 		return
@@ -140,15 +135,34 @@ func index(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Internal Server Error", 500)
 			return
 		}
+	} else {
+		http.Error(w, "Internal Server Error", 500)
+		return
 	}
-	results, err := getLocationByOffset(paginationValue)
-	fmt.Println(results)
+	results, err := getLocations(paginationValue, 10, true)
 	if err != nil {
 		http.Error(w, "Internal Server Error", 500)
 		return
 	}
 	t := template.Must(template.ParseFiles("templates/index.tpl.html"))
 	t.Execute(w, results)
+}
+
+func deleteLocation(w http.ResponseWriter, r *http.Request) {
+	logRequest(r)
+	match := deleteIdRE.FindStringSubmatch(r.URL.Path)
+	fmt.Println(match)
+	if len(match) != 2 {
+		http.Error(w, "Internal Server Error", 500)
+		return
+	}
+	locationId, err := strconv.Atoi(match[1])
+	if err != nil {
+		http.Error(w, "Internal Server Error", 500)
+		return
+	}
+	fmt.Printf("Location id: %d\n", locationId)
+	fmt.Fprintf(w, "yeah deleted ay ay ay")
 }
 
 // upload: allows me to upload a new image

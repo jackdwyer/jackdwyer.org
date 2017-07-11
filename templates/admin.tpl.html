@@ -27,6 +27,9 @@
             <th>Address</th>
             <th>image</th>
             <th>lat,lng</th>
+            <th>locked</th>
+            <th>id</th>
+            <th>DELETE</th>
           </tr>
         </thead>
         <tbody>
@@ -35,7 +38,10 @@
 			<td>{{ .Timestamp }}</td>
 			<td>{{ .ShortAddress }}</td>
 			<td>{{ .Image }}</td>
-			<td>wut</td>
+			<td>{{ .Latitude }}, {{ .Longitude }}</td>
+            <td>{{ .Unlocked }}</td>
+            <td>{{ .Id }}</td>
+            <td><a href=delete/{{ .Id }}>DELETE</a></td>
           </tr>
 		  {{ end }}
         </tbody>
