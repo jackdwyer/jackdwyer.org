@@ -135,9 +135,6 @@ func index(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Internal Server Error", 500)
 			return
 		}
-	} else {
-		http.Error(w, "Internal Server Error", 500)
-		return
 	}
 	results, err := getLocations(paginationValue, 10, true)
 	if err != nil {
