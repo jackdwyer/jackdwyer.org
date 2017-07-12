@@ -35,10 +35,10 @@ type location struct {
 	Longitude    float32
 	accuracy     float32
 	Timestamp    string
-	Image        string
+	Image        sql.NullString
 	comment      []byte
 	address      string
-	ShortAddress string
+	ShortAddress sql.NullString
 	Unlocked     bool
 }
 
@@ -55,6 +55,11 @@ func HandleUpload(imgPath string) {
 func logRequest(r *http.Request) {
 	requestLine := fmt.Sprintf("%s %s %s %s %s", r.RemoteAddr, r.Host, r.Method, r.RequestURI, r.URL)
 	log.Printf("%s", requestLine)
+}
+
+func deleteRow(id int) error {
+	_, err := db.Exec("delete from location where id = ?", id)
+	return err
 }
 
 func getLocations(offsetBase int, limit int, unlocked bool) ([]location, error) {
@@ -159,7 +164,12 @@ func deleteLocation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	fmt.Printf("Location id: %d\n", locationId)
-	fmt.Fprintf(w, "yeah deleted ay ay ay")
+	err = deleteRow(locationId)
+	if err != nil {
+		http.Error(w, "Internal Server Error", 500)
+		return
+	}
+	http.Redirect(w, r, "/admin", 301)
 }
 
 // upload: allows me to upload a new image

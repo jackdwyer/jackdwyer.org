@@ -36,8 +36,8 @@
 		  {{ range .}}
           <tr>
 			<td>{{ .Timestamp }}</td>
-			<td>{{ .ShortAddress }}</td>
-			<td>{{ .Image }}</td>
+			<td>{{ .ShortAddress.Value }}</td>
+			<td>{{ .Image.Value }}</td>
 			<td>{{ .Latitude }}, {{ .Longitude }}</td>
             <td>{{ .Unlocked }}</td>
             <td>{{ .Id }}</td>
