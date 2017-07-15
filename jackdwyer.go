@@ -11,6 +11,9 @@ import (
 	"regexp"
 	"strconv"
 
+	_ "image/jpeg"
+	_ "image/png"
+
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -26,9 +29,9 @@ func main() {
 	http.HandleFunc("/admin", admin)
 	http.HandleFunc("/delete", deleteLocation)
 	http.HandleFunc("/delete/", deleteLocation)
-	http.HandleFunc("/favicon.ico", favicon)
 	http.HandleFunc("/upload", upload)
 	http.HandleFunc("/upload/", upload)
+	http.HandleFunc("/favicon.ico", favicon)
 	http.HandleFunc("/", index)
 	db, _ = sql.Open("sqlite3", "./db/app.db")
 	http.ListenAndServe(hostAndPort, nil)
