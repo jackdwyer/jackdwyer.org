@@ -2,7 +2,9 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"image"
+	"log"
 	"net/http"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -17,6 +19,11 @@ func ImageTooBig(img image.Config) bool {
 		return true
 	}
 	return false
+}
+
+func logRequest(r *http.Request) {
+	requestLine := fmt.Sprintf("%s %s %s %s %s", r.RemoteAddr, r.Host, r.Method, r.RequestURI, r.URL)
+	log.Printf("%s", requestLine)
 }
 
 func ResizeImage(img image.Image) (image.Image, error) {

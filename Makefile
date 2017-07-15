@@ -1,5 +1,5 @@
 build:
-	go build -i -o bin/jackdwyer jackdwyer.go
+	go build -i -o bin/jackdwyer *.go
 
 release: build
 
@@ -15,6 +15,8 @@ refresh_db:
 
 get-deps:
 	go get -u github.com/aws/aws-sdk-go
+	go get github.com/codingsince1985/geo-golang
+	go get github.com/codingsince1985/geo-golang/openstreetmap
 	go get github.com/mattn/go-sqlite3
 	go get github.com/nfnt/resize
 
