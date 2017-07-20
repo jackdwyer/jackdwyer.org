@@ -14,3 +14,5 @@
 * [x] ci
 * [ ] DNS API (cloudflare)
 * [ ] s3/IAM (cloudformation)
+* [ ] TODOs
+* [ ] Manage environment variables/files

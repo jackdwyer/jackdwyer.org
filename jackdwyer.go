@@ -28,7 +28,7 @@ var indexPaginationRE = regexp.MustCompile("^/([0-9]+)$")
 var deleteIdRE = regexp.MustCompile("^/delete/([0-9]+)$")
 
 func main() {
-	hostAndPort := fmt.Sprintf("%s:%s\n", host, port)
+	hostAndPort := fmt.Sprintf("%s:%s", host, port)
 	log.Printf("Starting Web Server @ http://%s", hostAndPort)
 	r := mux.NewRouter()
 

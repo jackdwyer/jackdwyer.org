@@ -2,6 +2,7 @@
 Description=jackdwyer website
 
 [Service]
+EnvironmentFile=/opt/jackdwyer/ENV
 ExecStart=/opt/jackdwyer/jackdwyer
 WorkingDirectory=/opt/jackdwyer
 
