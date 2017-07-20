@@ -28,7 +28,7 @@ var indexPaginationRE = regexp.MustCompile("^/([0-9]+)$")
 var deleteIdRE = regexp.MustCompile("^/delete/([0-9]+)$")
 
 func main() {
-	hostAndPort := fmt.Sprintf("%s:%s", host, port)
+	hostAndPort := fmt.Sprintf("%s:%s\n", host, port)
 	log.Printf("Starting Web Server @ http://%s", hostAndPort)
 	r := mux.NewRouter()
 
@@ -93,7 +93,7 @@ func index(w http.ResponseWriter, r *http.Request) {
 		results,
 		basePath,
 	}
-	fmt.Printf("%T\n", results)
+	log.Printf("%T\n", results)
 	t := template.Must(template.ParseFiles("templates/index.tpl.html"))
 	t.Execute(w, templateData)
 }
@@ -101,7 +101,7 @@ func index(w http.ResponseWriter, r *http.Request) {
 func deleteLocation(w http.ResponseWriter, r *http.Request) {
 	logRequest(r)
 	match := deleteIdRE.FindStringSubmatch(r.URL.Path)
-	fmt.Println(match)
+	log.Println(match)
 	if len(match) != 2 {
 		http.Error(w, "Internal Server Error", 500)
 		return
@@ -111,7 +111,7 @@ func deleteLocation(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Internal Server Error", 500)
 		return
 	}
-	fmt.Printf("Location id: %d\n", locationId)
+	log.Printf("Location id: %d\n", locationId)
 	err = deleteRow(locationId)
 	if err != nil {
 		http.Error(w, "Internal Server Error", 500)
@@ -159,21 +159,21 @@ func upload(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Internal Server Error", 500)
 		return
 	}
-	fmt.Printf("\n\n%T\n\n", newImage)
+	log.Printf("\n\n%T\n\n", newImage)
 	t := time.Now()
 	filename := fmt.Sprintf("%s.JPG", t.Format(imageFilenameFormat))
-	fmt.Println(filename)
+	log.Println(filename)
 
 	buff := new(bytes.Buffer)
 	err = jpeg.Encode(buff, newImage, nil)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		http.Error(w, "Internal Server Error", 500)
 		return
 	}
 	err = UploadFile(buff.Bytes(), fmt.Sprintf("960/%s", filename))
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		http.Error(w, "Internal Server Error", 500)
 		return
 	}
