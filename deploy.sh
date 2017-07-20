@@ -17,7 +17,7 @@ ssh ${SSH_ARGS} ${USER}@${HOST} "
   sudo systemctl stop jackdwyer.org
   curl -L -o /opt/jackdwyer/jackdwyer 'https://github.com/jackdwyer/jackdwyer.org/releases/download/${TIMESTAMP}/jackdwyer'
   chmod +x /opt/jackdwyer/jackdwyer
-  cp /opt/jackdwyer/jackdwyer.org.service /etc/systemd/system/
+  sudo cp /opt/jackdwyer/jackdwyer.org.service /etc/systemd/system/
   sudo systemctl daemon-reload
   sudo systemctl start jackdwyer.org
 "
