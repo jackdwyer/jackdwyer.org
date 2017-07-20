@@ -23,8 +23,9 @@
       <br>
       <h4 style="margin: 0px; padding: 0px;"><center>JACK DWYER</center></h4>
       <h6><center><i>currently.</i> NYC, USA</center></h6>
-      {{range .}}
-        <img class="u-max-full-width" src="http://images.jackdwyer.org/960/{{ .Image.Value }}"></img>
+      {{ $basePath := .BasePath }}
+      {{range .Results}}
+        <img class="u-max-full-width" src="http://{{ $basePath }}/{{ .Image.Value }}"></img>
         <p align="right" style="margin:0px; border:0px;"><i>when. </i>2017-06-04</p>
         <p align="right"><i>near.</i> Johnson Avenue, NYC, New York, US</p>
       {{end}}

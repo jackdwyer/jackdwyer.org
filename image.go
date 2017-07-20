@@ -2,30 +2,19 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"image"
 	"image/jpeg"
+	"log"
 	"net/http"
-	"os"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
-	"github.com/nfnt/resize"
-
-	_ "image/jpeg"
-	_ "image/png"
+	"github.com/disintegration/imaging"
+	"github.com/rwcarlsen/goexif/exif"
 )
-
-func HandleUpload(imgPath string) {
-	file, _ := os.Open(imgPath)
-	defer file.Close()
-	img, _, _ := image.Decode(file)
-	m := resize.Resize(960, 0, img, resize.Lanczos3)
-	out, _ := os.Create("/tmp/out.jpg")
-	defer out.Close()
-	jpeg.Encode(out, m, nil)
-}
 
 func ImageTooBig(img image.Config) bool {
 	if img.Width > resizeWidth {
@@ -34,8 +23,24 @@ func ImageTooBig(img image.Config) bool {
 	return false
 }
 
-func ResizeImage(img image.Image) (image.Image, error) {
-	return resize.Resize(uint(resizeWidth), 0, img, resize.Lanczos3), nil
+func ResizeImage(b []byte) (image.Image, error) {
+	r := bytes.NewReader(b)
+	image, err := jpeg.Decode(r)
+	// TODO: check err ?
+	_, _ = r.Seek(0, 0)
+	if err != nil {
+		return nil, nil
+	}
+	// lame
+	x, _ := exif.Decode(r)
+	orientation, _ := x.Get(exif.Orientation)
+	o := orientation.String()
+	log.Println(o)
+	if o == "6" {
+		nimg := imaging.Resize(image, 0, resizeWidth, imaging.Lanczos)
+		return imaging.Rotate270(nimg), nil
+	}
+	return imaging.Resize(image, resizeWidth, 0, imaging.Lanczos), nil
 }
 
 func UploadFile(f []byte, filename string) error {
@@ -46,11 +51,14 @@ func UploadFile(f []byte, filename string) error {
 	}
 	cfg := aws.NewConfig().WithRegion("us-east-1").WithCredentials(creds)
 	awsS3 := s3.New(session.New(), cfg)
-
+	// TODO: set this in settings
+	acl := "public-read"
 	size := len(f)
 	fileType := http.DetectContentType(f)
 	params := &s3.PutObjectInput{
-		Bucket:        aws.String("dev.jackdwyer.org"),
+		ACL: &acl,
+		// TODO: set this in settings
+		Bucket:        aws.String("dev-images.jackdwyer.org"),
 		Key:           aws.String(filename),
 		Body:          bytes.NewReader(f),
 		ContentLength: aws.Int64(int64(size)),

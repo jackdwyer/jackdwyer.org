@@ -9,8 +9,8 @@ type location struct {
 	Id           int
 	uuid         string
 	_type        string
-	Latitude     float32
-	Longitude    float32
+	Latitude     float64
+	Longitude    float64
 	accuracy     float32
 	Timestamp    string
 	Image        sql.NullString
@@ -23,6 +23,18 @@ type location struct {
 func deleteRow(id int) error {
 	_, err := db.Exec("delete from location where id = ?", id)
 	return err
+}
+
+func insertLocation(latitude float64, longitude float64, image string, address string) error {
+	// TODO: set this properly
+	timestamp := "2017-01-01 00:00:00"
+	statment := "INSERT INTO location (latitude, longitude, image, short_address, timestamp, unlocked) VALUES (?, ?, ?, ?, ?, ?);"
+	_, err := db.Exec(statment, latitude, longitude, image, address, timestamp, true)
+	if err != nil {
+		return err
+	}
+	// TODO: return id
+	return nil
 }
 
 func getLocations(offsetBase int, limit int, unlocked bool) ([]location, error) {

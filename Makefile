@@ -15,10 +15,11 @@ refresh_db:
 
 get-deps:
 	go get -u github.com/aws/aws-sdk-go
+	go get github.com/rwcarlsen/goexif/exif
 	go get github.com/codingsince1985/geo-golang
 	go get github.com/codingsince1985/geo-golang/openstreetmap
-	go get github.com/mattn/go-sqlite3
-	go get github.com/nfnt/resize
+	go get -u github.com/disintegration/imaging
+	go get -u github.com/gorilla/mux
 
 dev-test:
 	while :; do inotifywait jackdwyer_test.go; go test; done
@@ -32,3 +33,9 @@ get-test-data:
 
 validate-dev-deploy:
 	curl --fail -o/dev/null -s http://dev.jackdwyer.org/
+
+sync-production-development:
+	aws s3 sync s3://images.jackdwyer.org/960/ s3://dev-images.jackdwyer.org/960 --profile personal
+
+TODOS:
+	ag --ignore Makefile TODO

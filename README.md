@@ -12,3 +12,5 @@
 * [ ] upload page with last uploaded item
 * [ ] authentication
 * [x] ci
+* [ ] DNS API (cloudflare)
+* [ ] s3/IAM (cloudformation)

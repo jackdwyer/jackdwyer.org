@@ -1,15 +1,19 @@
 package main
 
 import (
+	"bytes"
 	"database/sql"
 	"fmt"
 	"html/template"
-	"io"
+	"image/jpeg"
+	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
 	"regexp"
 	"strconv"
+	"time"
+
+	"github.com/gorilla/mux"
 
 	_ "image/jpeg"
 	_ "image/png"
@@ -26,15 +30,18 @@ var deleteIdRE = regexp.MustCompile("^/delete/([0-9]+)$")
 func main() {
 	hostAndPort := fmt.Sprintf("%s:%s", host, port)
 	log.Printf("Starting Web Server @ http://%s", hostAndPort)
-	http.HandleFunc("/admin", admin)
-	http.HandleFunc("/delete", deleteLocation)
-	http.HandleFunc("/delete/", deleteLocation)
-	http.HandleFunc("/upload", upload)
-	http.HandleFunc("/upload/", upload)
-	http.HandleFunc("/favicon.ico", favicon)
-	http.HandleFunc("/", index)
+	r := mux.NewRouter()
+
+	r.HandleFunc("/", index)
+	r.HandleFunc("/admin", admin)
+	r.HandleFunc("/delete/{id:[0-9]+}", deleteLocation)
+	r.HandleFunc("/upload", upload)
+	// http.HandleFunc("/delete/", deleteLocation)
+	// http.HandleFunc("/upload", upload)
+	// http.HandleFunc("/upload/", upload)
+	// http.HandleFunc("/favicon.ico", favicon)
 	db, _ = sql.Open("sqlite3", "./db/app.db")
-	http.ListenAndServe(hostAndPort, nil)
+	http.ListenAndServe(hostAndPort, r)
 	db.Close()
 }
 
@@ -79,8 +86,16 @@ func index(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Internal Server Error", 500)
 		return
 	}
+	templateData := struct {
+		Results  []location
+		BasePath string
+	}{
+		results,
+		basePath,
+	}
+	fmt.Printf("%T\n", results)
 	t := template.Must(template.ParseFiles("templates/index.tpl.html"))
-	t.Execute(w, results)
+	t.Execute(w, templateData)
 }
 
 func deleteLocation(w http.ResponseWriter, r *http.Request) {
@@ -112,19 +127,56 @@ func upload(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "404", 404)
 		return
 	}
-	file, handler, err := r.FormFile("img")
-	defer file.Close()
+	latitude, err := strconv.ParseFloat(r.FormValue("latitude"), 64)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "400", 400)
+		return
+	}
+	longitude, err := strconv.ParseFloat(r.FormValue("longitude"), 64)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "400", 400)
+		return
+	}
+	address, err := reverseGeocode(latitude, longitude)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "Internal Server Error", 500)
+		return
+	}
+	formFile, _, err := r.FormFile("img")
+	defer formFile.Close()
 	if err != nil {
 		log.Printf("FAILED on image upload: %s", err)
 		http.Error(w, "Internal Server Error", 500)
 		return
 	}
-	f, err := os.OpenFile(handler.Filename, os.O_WRONLY|os.O_CREATE, 0444)
-	defer f.Close()
+	b, err := ioutil.ReadAll(formFile)
+	newImage, err := ResizeImage(b)
 	if err != nil {
-		log.Printf("FAILED in saving image: %s", err)
+		log.Println(err)
 		http.Error(w, "Internal Server Error", 500)
 		return
 	}
-	io.Copy(f, file)
+	fmt.Printf("\n\n%T\n\n", newImage)
+	t := time.Now()
+	filename := fmt.Sprintf("%s.JPG", t.Format(imageFilenameFormat))
+	fmt.Println(filename)
+
+	buff := new(bytes.Buffer)
+	err = jpeg.Encode(buff, newImage, nil)
+	if err != nil {
+		fmt.Println(err)
+		http.Error(w, "Internal Server Error", 500)
+		return
+	}
+	err = UploadFile(buff.Bytes(), fmt.Sprintf("960/%s", filename))
+	if err != nil {
+		fmt.Println(err)
+		http.Error(w, "Internal Server Error", 500)
+		return
+	}
+	insertLocation(latitude, longitude, filename, address)
+	log.Println("Inserted image: with id:")
 }
