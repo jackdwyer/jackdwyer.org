@@ -26,8 +26,8 @@
       {{ $basePath := .BasePath }}
       {{range .Results}}
         <img class="u-max-full-width" src="http://{{ $basePath }}/{{ .Image.Value }}"></img>
-        <p align="right" style="margin:0px; border:0px;"><i>when. </i>2017-06-04</p>
-        <p align="right"><i>near.</i> Johnson Avenue, NYC, New York, US</p>
+        <p align="right" style="margin:0px; border:0px;"><i>when. </i>{{ printf "%.10s" .Timestamp }}</p>
+        <p align="right"><i>near.</i> {{ .ShortAddress.Value }}</p>
       {{end}}
 
       <a href=/>jackdwyer</a> | <a href="http://cycling.jackdwyer.org">cycling</a> | <a href="/projects">projects</a> | <a href="/blog">blog</a> | <a href="/log">log</a> | J f867b42baa72444f5d3ac7c79ea57d33eb505f45

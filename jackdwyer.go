@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"html/template"
 	"image/jpeg"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -41,7 +42,10 @@ func main() {
 	// http.HandleFunc("/upload/", upload)
 	// http.HandleFunc("/favicon.ico", favicon)
 	db, _ = sql.Open("sqlite3", "./db/app.db")
-	http.ListenAndServe(hostAndPort, r)
+	err := http.ListenAndServe(hostAndPort, r)
+	if err != nil {
+		log.Println(err)
+	}
 	db.Close()
 }
 
@@ -123,6 +127,10 @@ func deleteLocation(w http.ResponseWriter, r *http.Request) {
 // upload: allows me to upload a new image
 func upload(w http.ResponseWriter, r *http.Request) {
 	logRequest(r)
+	t := time.Now()
+	filename := fmt.Sprintf("%s.JPG", t.Format(imageFilenameFormat))
+	timestamp := fmt.Sprintf("%s", t.Format(SQLTimestampFormat))
+	log.Printf("Generated filename: %s\n", filename)
 	if r.Method != "POST" {
 		http.Error(w, "404", 404)
 		return
@@ -159,10 +167,6 @@ func upload(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Internal Server Error", 500)
 		return
 	}
-	log.Printf("\n\n%T\n\n", newImage)
-	t := time.Now()
-	filename := fmt.Sprintf("%s.JPG", t.Format(imageFilenameFormat))
-	log.Println(filename)
 
 	buff := new(bytes.Buffer)
 	err = jpeg.Encode(buff, newImage, nil)
@@ -177,6 +181,12 @@ func upload(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Internal Server Error", 500)
 		return
 	}
-	insertLocation(latitude, longitude, filename, address)
-	log.Println("Inserted image: with id:")
+	err = insertLocation(latitude, longitude, filename, address, timestamp)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "Internal Server Error", 500)
+		return
+	}
+	io.WriteString(w, "Success")
+	return
 }

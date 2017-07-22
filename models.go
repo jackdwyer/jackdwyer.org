@@ -25,15 +25,17 @@ func deleteRow(id int) error {
 	return err
 }
 
-func insertLocation(latitude float64, longitude float64, image string, address string) error {
-	// TODO: set this properly
-	timestamp := "2017-01-01 00:00:00"
+func insertLocation(latitude float64, longitude float64, image string, address string, timestamp string) error {
 	statment := "INSERT INTO location (latitude, longitude, image, short_address, timestamp, unlocked) VALUES (?, ?, ?, ?, ?, ?);"
-	_, err := db.Exec(statment, latitude, longitude, image, address, timestamp, true)
+	res, err := db.Exec(statment, latitude, longitude, image, address, timestamp, true)
 	if err != nil {
 		return err
 	}
-	// TODO: return id
+	id, err := res.LastInsertId()
+	if err != nil {
+		return err
+	}
+	log.Printf("Inserted Location with ID: %d", id)
 	return nil
 }
 

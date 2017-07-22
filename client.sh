@@ -12,8 +12,12 @@ if [[ -z ${HOST} ]]; then
   HOST=http://localhost:5000/upload
 fi
 
-LATITUDE=40.70574
-LONGITUDE=-73.94249
+# Melbourne
+LATITUDE=-37.814
+LONGITUDE=144.96332
+
+# LATITUDE=40.70574
+# LONGITUDE=-73.94249
 IMAGE=test_data/test1.jpg
 curl -v -i -X POST \
 -H "Content-Type: multipart/form-data"  \
@@ -22,8 +26,8 @@ curl -v -i -X POST \
 -F "longitude=${LONGITUDE}" \
 ${HOST}
 
-LATITUDE=40.70574
-LONGITUDE=-73.94249
+# LATITUDE=40.70574
+# LONGITUDE=-73.94249
 IMAGE=test_data/test2.jpg
 curl -v -i -X POST \
 -H "Content-Type: multipart/form-data"  \

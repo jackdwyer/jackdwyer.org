@@ -25,16 +25,17 @@ func ImageTooBig(img image.Config) bool {
 func ResizeImage(b []byte) (image.Image, error) {
 	r := bytes.NewReader(b)
 	image, err := jpeg.Decode(r)
-	// TODO: check err ?
-	_, _ = r.Seek(0, 0)
 	if err != nil {
 		return nil, nil
 	}
-	// lame
+	_, err = r.Seek(0, 0)
+	if err != nil {
+		return nil, nil
+	}
 	x, _ := exif.Decode(r)
 	orientation, _ := x.Get(exif.Orientation)
 	o := orientation.String()
-	log.Println(o)
+	log.Printf("Orientation of image: %s\n", o)
 	if o == "6" {
 		nimg := imaging.Resize(image, 0, resizeWidth, imaging.Lanczos)
 		return imaging.Rotate270(nimg), nil
@@ -50,13 +51,10 @@ func UploadFile(f []byte, filename string) error {
 	}
 	cfg := aws.NewConfig().WithRegion("us-east-1").WithCredentials(creds)
 	awsS3 := s3.New(session.New(), cfg)
-	// TODO: set this in settings
-	acl := "public-read"
 	size := len(f)
 	fileType := http.DetectContentType(f)
 	params := &s3.PutObjectInput{
-		ACL: &acl,
-		// TODO: set this in settings
+		ACL:           &S3ACL,
 		Bucket:        aws.String("dev-images.jackdwyer.org"),
 		Key:           aws.String(filename),
 		Body:          bytes.NewReader(f),
